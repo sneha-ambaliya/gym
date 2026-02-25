@@ -1,21 +1,23 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api"; 
 import PlanRow from "./PlanRow.jsx";
-import EditPlanModal from "./EditPlanModal.jsx"; 
+import EditPlanModal from "./EditPlanModal.jsx";
 
 const ManagePlans = () => {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
-  const [editingPlan, setEditingPlan] = useState(null); 
+  const [editingPlan, setEditingPlan] = useState(null);
 
   const fetchPlans = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/plans");
+      const res = await api.get("/plans"); 
       setPlans(res.data);
     } catch (err) {
-      setMessage(err.response?.data?.message || " Failed to load plans");
+      setMessage(
+        err.response?.data?.message || " Failed to load plans"
+      );
     } finally {
       setLoading(false);
     }
@@ -29,11 +31,13 @@ const ManagePlans = () => {
     if (!window.confirm("Are you sure you want to delete this plan?")) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/plans/${id}`);
+      await api.delete(`/plans/${id}`); 
       setMessage(" Plan deleted successfully!");
       fetchPlans();
     } catch (err) {
-      setMessage(err.response?.data?.message || " Failed to delete plan");
+      setMessage(
+        err.response?.data?.message || " Failed to delete plan"
+      );
     }
   };
 
@@ -87,12 +91,11 @@ const ManagePlans = () => {
         )}
       </div>
 
-      {/* Edit modal */}
       {editingPlan && (
         <EditPlanModal
           plan={editingPlan}
           onClose={() => setEditingPlan(null)}
-          onUpdated={fetchPlans} // refresh list after edit
+          onUpdated={fetchPlans}
         />
       )}
     </div>

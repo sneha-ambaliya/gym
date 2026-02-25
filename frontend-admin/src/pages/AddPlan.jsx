@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../utils/api";   
 
 const AddPlan = () => {
   const [form, setForm] = useState({
@@ -16,7 +16,10 @@ const AddPlan = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setForm({ ...form, [name]: type === "checkbox" ? checked : value });
+    setForm({
+      ...form,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -40,9 +43,9 @@ const AddPlan = () => {
         isPopular: form.isPopular,
       };
 
-      await axios.post("http://localhost:5000/api/plans", payload);
+      await api.post("/plans", payload);   // 👈 no localhost now
 
-      setMessage(" Plan added successfully!");
+      setMessage("✅ Plan added successfully!");
 
       setForm({
         name: "",
@@ -54,7 +57,7 @@ const AddPlan = () => {
       });
     } catch (error) {
       setMessage(
-        error.response?.data?.message || " Something went wrong"
+        error.response?.data?.message || "❌ Something went wrong"
       );
     } finally {
       setLoading(false);
@@ -81,6 +84,7 @@ const AddPlan = () => {
         />
 
         <input
+          type="number"
           name="monthlyPrice"
           placeholder="Monthly Price"
           value={form.monthlyPrice}
@@ -90,6 +94,7 @@ const AddPlan = () => {
         />
 
         <input
+          type="number"
           name="yearlyPrice"
           placeholder="Yearly Price"
           value={form.yearlyPrice}

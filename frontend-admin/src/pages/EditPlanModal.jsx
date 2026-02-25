@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../utils/api"; 
 
 const EditPlanModal = ({ plan, onClose, onUpdated }) => {
   const [form, setForm] = useState({
@@ -10,12 +10,16 @@ const EditPlanModal = ({ plan, onClose, onUpdated }) => {
     disabledFeatures: plan.disabledFeatures.join(", "),
     isPopular: plan.isPopular,
   });
+
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setForm({ ...form, [name]: type === "checkbox" ? checked : value });
+    setForm({
+      ...form,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -39,13 +43,15 @@ const EditPlanModal = ({ plan, onClose, onUpdated }) => {
         isPopular: form.isPopular,
       };
 
-      await axios.put(`http://localhost:5000/api/plans/${plan._id}`, payload);
+      await api.put(`/plans/${plan._id}`, payload); // 👈 clean version
 
-      setMessage(" Plan updated successfully!");
-      onUpdated(); // refresh parent list
+      setMessage("✅ Plan updated successfully!");
+      onUpdated();
       onClose();
     } catch (err) {
-      setMessage(err.response?.data?.message || " Update failed");
+      setMessage(
+        err.response?.data?.message || "❌ Update failed"
+      );
     } finally {
       setLoading(false);
     }
@@ -69,7 +75,9 @@ const EditPlanModal = ({ plan, onClose, onUpdated }) => {
           className="input"
           required
         />
+
         <input
+          type="number"
           name="monthlyPrice"
           placeholder="Monthly Price"
           value={form.monthlyPrice}
@@ -77,7 +85,9 @@ const EditPlanModal = ({ plan, onClose, onUpdated }) => {
           className="input"
           required
         />
+
         <input
+          type="number"
           name="yearlyPrice"
           placeholder="Yearly Price"
           value={form.yearlyPrice}
@@ -85,6 +95,7 @@ const EditPlanModal = ({ plan, onClose, onUpdated }) => {
           className="input"
           required
         />
+
         <textarea
           name="features"
           placeholder="Features (comma separated)"
@@ -92,6 +103,7 @@ const EditPlanModal = ({ plan, onClose, onUpdated }) => {
           onChange={handleChange}
           className="input h-24 resize-none"
         />
+
         <textarea
           name="disabledFeatures"
           placeholder="Disabled Features (comma separated)"
@@ -99,6 +111,7 @@ const EditPlanModal = ({ plan, onClose, onUpdated }) => {
           onChange={handleChange}
           className="input h-20 resize-none"
         />
+
         <label className="flex items-center gap-2 text-[#9E9E9E] mt-3">
           <input
             type="checkbox"
@@ -121,6 +134,7 @@ const EditPlanModal = ({ plan, onClose, onUpdated }) => {
           >
             Cancel
           </button>
+
           <button
             type="submit"
             disabled={loading}
