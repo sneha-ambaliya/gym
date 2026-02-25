@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #111111;
+  color: #F5F5F5;
+}
+
+.icon {
+  @apply absolute left-3 top-1/2 -translate-y-1/2 text-[#9E9E9E];
+}
+
+html {
+  scroll-behavior: smooth;
+}
